@@ -6,7 +6,7 @@
   <meta name="description" content="An example for learning HTML5">
   <meta name="keyword" content="html5 css javascript">
   <style type="text/css">
-    
+
     html, body{
         padding: 0;
         margin: 0;
@@ -72,6 +72,9 @@
         padding: 1.5em 10%;
         border-top: solid 1px #d9e3dc;
 
+    }
+    .sidebar li.drop-over {
+      background: rgba(255, 255, 255, 0.5);
     }
 
     @font-face {
@@ -144,10 +147,10 @@
   <aside class="sidebar">
     <nav>
       <ul>
-        <li><a href="https://developer.mozilla.org/ko/docs/Web" title="Mozilla Developer Network">MDN</a></li>
-        <li><a href="http://stackoverflow.com" title="Stack Overflow">Stack Overflow</a></li>
-        <li><a href="http://jsfiddle.net" title="JavaScript Playground">jsfiddle.net</a></li>
-        <li><a href="https://github.com" title="A social network for developers">GitHub</a></li>
+        <li draggable="true" class="menu-item"><a href="https://developer.mozilla.org/ko/docs/Web" title="Mozilla Developer Network">MDN</a></li>
+        <li draggable="true" class="menu-item"><a href="http://stackoverflow.com" title="Stack Overflow">Stack Overflow</a></li>
+        <li draggable="true" class="menu-item"><a href="http://jsfiddle.net" title="JavaScript Playground">jsfiddle.net</a></li>
+        <li draggable="true" class="menu-item"><a href="https://github.com" title="A social network for developers">GitHub</a></li>
       </ul>
     </nav>
   </aside>
@@ -158,5 +161,54 @@
     <a href="https://github.com" title="A social network for developers" class="icon-github">Github</a>
   </footer>
 
+  <script type="text/javascript">
+
+
+  var dragElem = null;
+  function handleDragStart(e) {
+    this.classList.add('drop-over');
+    dragElem = this;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
+  }
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    return false;
+  }
+  function handleDragEnter(e) {
+    this.classList.add('drop-over');
+  }
+  function handleDragLeave(e) {
+    this.classList.remove('drop-over');
+  }
+  function handleDrop(e) {
+    if (e.stopPropagation) {
+      e.stopPropagation();
+    }
+    if (dragElem != this) {
+      dragElem.innerHTML = this.innerHTML;
+      this.innerHTML = e.dataTransfer.getData('text/html');
+    }
+    return false;
+  }
+  function handleDragEnd(e) {
+    var cols = document.querySelectorAll('.sidebar .menu-item');
+    [].forEach.call(cols, function (col) {
+      col.classList.remove('drop-over');
+    });
+  }
+  var cols = document.querySelectorAll('.sidebar .menu-item');
+
+  [].forEach.call(cols, function(col) {
+    col.addEventListener('dragstart', handleDragStart, false);
+    col.addEventListener('dragenter', handleDragEnter, false);
+    col.addEventListener('dragover', handleDragOver, false);
+    col.addEventListener('dragleave', handleDragLeave, false);
+    col.addEventListener('drop', handleDrop, false);
+    col.addEventListener('dragend', handleDragEnd, false);
+
+    });
+    </script>
 </body>
 </html>
